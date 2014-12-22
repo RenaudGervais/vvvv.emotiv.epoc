@@ -20,8 +20,8 @@ namespace VVVV.Nodes
 	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable
 	{
 		#region fields & pins
-		[Input("Input", DefaultValue = 1.0)]
-		public ISpread<double> FInput;
+		[Input("Enabled", DefaultBoolean = false, IsToggle = true, IsSingle = true)]
+		public ISpread<bool> FEnabled;
 
 		[Output("Output")]
 		public ISpread<double> FOutput;
@@ -31,6 +31,7 @@ namespace VVVV.Nodes
 		#endregion fields & pins
 		
 		private EmoEngine mEngine;
+		private bool mIsConnected = false;
 		
 		//Contructor
 		public DeviceEmotivEpocNode() {
@@ -40,17 +41,30 @@ namespace VVVV.Nodes
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
+			if(FEnabled[0]) {
+				if(!mIsConnected) {
+					//Use Connect() to connect to EmoEngine
+//					mEngine.Connect();
+					//Use RemoteConnect() to connect to Control Panel (port 3008) or EmoComposer (port 1726)
+					mEngine.RemoteConnect("127.0.0.1", 1726);
+					mIsConnected = true;
+				}
+			
 			FOutput.SliceCount = SpreadMax;
 
-			for (int i = 0; i < SpreadMax; i++)
-				FOutput[i] = FInput[i] * 2;
+//			for (int i = 0; i < SpreadMax; i++)
+//				FOutput[i] = FInput[i] * 2;
 
 			//FLogger.Log(LogType.Debug, "hi tty!");
+			} else {
+				mEngine.Disconnect();
+				mIsConnected = false;
+			}
 		}
 		
 		//Destructor
 		public void Dispose() {
-			
+			mEngine.Disconnect();
 		}
 	}
 }
