@@ -75,7 +75,9 @@ namespace VVVV.Nodes
 		
 		//I/O pin that needs to be setup only once after constructor
 		public void OnImportsSatisfied() {
+			//Set the legends as they won't change dynamically
 			ExpressivLegend();
+			AffectivLegend();
 		}
 		
 		
@@ -112,6 +114,7 @@ namespace VVVV.Nodes
 		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) { 
 			EmoState lES = e.emoState;
 			
+			FExpressiv[0] = lES.ExpressivIsBlink() ? 1.0 : 0.0;
 			Double rawScoreEc = 0, minScaleEc = 0, maxScaleEc = 0;
 			lES.AffectivGetExcitementShortTermModelParams(out rawScoreEc, out minScaleEc, out maxScaleEc);
 			FLogger.Log(LogType.Debug, "Excitement: " + lES.AffectivGetEngagementBoredomScore());
@@ -121,7 +124,6 @@ namespace VVVV.Nodes
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
-			FConnected.SliceCount = SpreadMax;
 			if(FConnect.IsChanged) {
 				if(FConnect[0] && !mIsConnected)
 					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
@@ -141,8 +143,10 @@ namespace VVVV.Nodes
 				mEngine.ProcessEvents(1000);
 			}
 			
+			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
-//			ExpressivLegend();
+			FExpressiv.SliceCount = 11;
+			FAffectiv.SliceCount = 5;
 		}
 		
 		
@@ -160,6 +164,17 @@ namespace VVVV.Nodes
 			FExpressivLegend[8] = "Right Smirk";
 			FExpressivLegend[9] = "Left Smirk";
 			FExpressivLegend[10] = "Laugh";
+		}
+		
+		
+		//Affectiv legend values
+		protected void AffectivLegend() {
+			FAffectivLegend.SliceCount = 5;
+			FAffectivLegend[0] = "Engagement/Boredom";
+			FAffectivLegend[1] = "Frustration";
+			FAffectivLegend[2] = "Meditation";
+			FAffectivLegend[3] = "Instantaneous Excitement";
+			FAffectivLegend[4] = "Long Term Excitement";
 		}
 	}
 }
