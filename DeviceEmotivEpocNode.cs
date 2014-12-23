@@ -15,7 +15,7 @@ using VVVV.Core.Logging;
 namespace VVVV.Nodes
 {
 	#region PluginInfo
-	[PluginInfo(Name = "EmotivEpoc", Category = "Device", Help = "Basic template with one value in/out", Tags = "")]
+	[PluginInfo(Name = "EmotivEpoc", Category = "Device", Help = "Node to connect to the EmotivSDK and retrieve EmoStates", Tags = "")]
 	#endregion PluginInfo
 	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable
 	{
