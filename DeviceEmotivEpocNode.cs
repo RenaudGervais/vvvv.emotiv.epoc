@@ -21,7 +21,7 @@ namespace VVVV.Nodes
 				Tags = "",
 				AutoEvaluate = true)]
 	#endregion PluginInfo
-	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable
+	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable, IPartImportsSatisfiedNotification
 	{
 		#region enums
 		public enum TEmotivConnectionMode {
@@ -41,6 +41,18 @@ namespace VVVV.Nodes
 		
 		[Input("Connection Mode", IsSingle = true, DefaultEnumEntry = "EmoEngine")]
 		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
+		
+		[Output("Expressiv Value")]
+		public ISpread<double> FExpressiv;
+		
+		[Output("Expressiv Legend")]
+		public ISpread<string> FExpressivLegend;
+		
+		[Output("Affectiv Value")]
+		public ISpread<double> FAffectiv;
+		
+		[Output("Affectiv Legend")]
+		public ISpread<string> FAffectivLegend;
 
 		[Output("Connected", IsToggle = true, IsSingle = true)]
 		public ISpread<bool> FConnected;
@@ -58,6 +70,12 @@ namespace VVVV.Nodes
 			
 			//Register event handler
 			mEngine.EmoStateUpdated += new EmoEngine.EmoStateUpdatedEventHandler(EmoStateUpdated);
+		}
+		
+		
+		//I/O pin that needs to be setup only once after constructor
+		public void OnImportsSatisfied() {
+			ExpressivLegend();
 		}
 		
 		
@@ -85,6 +103,7 @@ namespace VVVV.Nodes
 			}
 			
 			FLogger.Log(LogType.Debug, "Connected!");
+			
 			return true;
 		}
 		
@@ -123,6 +142,24 @@ namespace VVVV.Nodes
 			}
 			
 			FConnected[0] = mIsConnected;
+//			ExpressivLegend();
+		}
+		
+		
+		//Expressiv legend values
+		protected void ExpressivLegend() {
+			FExpressivLegend.SliceCount = 11;
+			FExpressivLegend[0] = "Blink";
+			FExpressivLegend[1] = "Right Wink";
+			FExpressivLegend[2] = "Left Wink";
+			FExpressivLegend[3] = "Look Right/Left";
+			FExpressivLegend[4] = "Raise Brow";
+			FExpressivLegend[5] = "Furrow Brow";
+			FExpressivLegend[6] = "Smile";
+			FExpressivLegend[7] = "Clench";
+			FExpressivLegend[8] = "Right Smirk";
+			FExpressivLegend[9] = "Left Smirk";
+			FExpressivLegend[10] = "Laugh";
 		}
 	}
 }
