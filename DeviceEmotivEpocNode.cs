@@ -159,7 +159,7 @@ namespace VVVV.Nodes
 			
 			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
-			FExpressiv.SliceCount = 11;
+			FExpressiv.SliceCount = 14;
 			FAffectiv.SliceCount = 5;
 		}
 		
