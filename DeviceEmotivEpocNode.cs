@@ -15,7 +15,11 @@ using VVVV.Core.Logging;
 namespace VVVV.Nodes
 {
 	#region PluginInfo
-	[PluginInfo(Name = "EmotivEpoc", Category = "Device", Help = "Node to connect to the EmotivSDK and retrieve EmoStates", Tags = "")]
+	[PluginInfo(Name = "EmotivEpoc",
+				Category = "Device",
+				Help = "Node to connect to the EmotivSDK and retrieve EmoStates",
+				Tags = "",
+				AutoEvaluate = true)]
 	#endregion PluginInfo
 	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable
 	{
@@ -30,7 +34,7 @@ namespace VVVV.Nodes
 		
 		#region fields & pins
 		[Input("Connect", DefaultBoolean = false, IsToggle = true, IsSingle = true)]
-		public ISpread<bool> FConnect;
+		public IDiffSpread<bool> FConnect;
 		
 		[Input("Server", DefaultString = "127.0.0.1", IsSingle = true)]
 		public IDiffSpread<string> FServer;
@@ -38,8 +42,8 @@ namespace VVVV.Nodes
 		[Input("Connection Mode", IsSingle = true, DefaultEnumEntry = "EmoEngine")]
 		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
 
-		[Output("Output")]
-		public ISpread<double> FOutput;
+		[Output("Connected", IsToggle = true, IsSingle = true)]
+		public ISpread<bool> FConnected;
 
 		[Import()]
 		public ILogger FLogger;
@@ -75,10 +79,12 @@ namespace VVVV.Nodes
 				break;
 				
 				case TEmotivConnectionMode.EmoComposer:
+				FLogger.Log(LogType.Debug, "Connecting...");
 				mEngine.RemoteConnect(iServer, 1726);
 				break;
 			}
 			
+			FLogger.Log(LogType.Debug, "Connected!");
 			return true;
 		}
 		
@@ -86,30 +92,37 @@ namespace VVVV.Nodes
 		//Handle data on EmoState update
 		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) { 
 			EmoState lES = e.emoState;
+			
+			Double rawScoreEc = 0, minScaleEc = 0, maxScaleEc = 0;
+			lES.AffectivGetExcitementShortTermModelParams(out rawScoreEc, out minScaleEc, out maxScaleEc);
+			FLogger.Log(LogType.Debug, "Excitement: " + lES.AffectivGetEngagementBoredomScore());
 		}
 
 		
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
-			if(FConnect[0]) {
-				if(FServer.IsChanged || ConnectionMode.IsChanged) {
+			FConnected.SliceCount = SpreadMax;
+			if(FConnect.IsChanged) {
+				if(FConnect[0] && !mIsConnected)
+					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+				else {
 					mEngine.Disconnect();
-					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+					mIsConnected = false;
 				}
-				
-				if(!mIsConnected) {
-					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
-				}
-				
+			}
+			
+			if((FServer.IsChanged || ConnectionMode.IsChanged) && mIsConnected) {
+				mEngine.Disconnect();
+				mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+			}
+			
+			if(mIsConnected) {
 				//Process events
 				mEngine.ProcessEvents(1000);
-
-			//FLogger.Log(LogType.Debug, "hi tty!");
-			} else {
-				mEngine.Disconnect();
-				mIsConnected = false;
 			}
+			
+			FConnected[0] = mIsConnected;
 		}
 	}
 }
