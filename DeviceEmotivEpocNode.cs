@@ -19,9 +19,24 @@ namespace VVVV.Nodes
 	#endregion PluginInfo
 	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable
 	{
+		#region enums
+		public enum TEmotivConnectionMode {
+			EmoEngine,
+			EmotivControlPanel,
+			EmoComposer
+		}
+		#endregion enums
+		
+		
 		#region fields & pins
-		[Input("Enabled", DefaultBoolean = false, IsToggle = true, IsSingle = true)]
-		public ISpread<bool> FEnabled;
+		[Input("Connect", DefaultBoolean = false, IsToggle = true, IsSingle = true)]
+		public ISpread<bool> FConnect;
+		
+		[Input("Server", DefaultString = "127.0.0.1", IsSingle = true)]
+		public IDiffSpread<string> FServer;
+		
+		[Input("Connection Mode", IsSingle = true, DefaultEnumEntry = "EmoEngine")]
+		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
 
 		[Output("Output")]
 		public ISpread<double> FOutput;
@@ -36,35 +51,65 @@ namespace VVVV.Nodes
 		//Contructor
 		public DeviceEmotivEpocNode() {
 			mEngine = EmoEngine.Instance;
+			
+			//Register event handler
+			mEngine.EmoStateUpdated += new EmoEngine.EmoStateUpdatedEventHandler(EmoStateUpdated);
+		}
+		
+		
+		//Destructor
+		public void Dispose() {
+			mEngine.Disconnect();
+		}
+		
+		
+		//Create the connection
+		protected bool Connect(TEmotivConnectionMode iMode, string iServer) {
+			switch(iMode) {
+				case TEmotivConnectionMode.EmoEngine:
+				mEngine.Connect();
+				break;
+				
+				case TEmotivConnectionMode.EmotivControlPanel:
+				mEngine.RemoteConnect(iServer, 3008);
+				break;
+				
+				case TEmotivConnectionMode.EmoComposer:
+				mEngine.RemoteConnect(iServer, 1726);
+				break;
+			}
+			
+			return true;
+		}
+		
+		
+		//Handle data on EmoState update
+		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) { 
+			EmoState lES = e.emoState;
 		}
 
+		
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
-			if(FEnabled[0]) {
-				if(!mIsConnected) {
-					//Use Connect() to connect to EmoEngine
-//					mEngine.Connect();
-					//Use RemoteConnect() to connect to Control Panel (port 3008) or EmoComposer (port 1726)
-					mEngine.RemoteConnect("127.0.0.1", 1726);
-					mIsConnected = true;
+			if(FConnect[0]) {
+				if(FServer.IsChanged || ConnectionMode.IsChanged) {
+					mEngine.Disconnect();
+					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
 				}
-			
-			FOutput.SliceCount = SpreadMax;
-
-//			for (int i = 0; i < SpreadMax; i++)
-//				FOutput[i] = FInput[i] * 2;
+				
+				if(!mIsConnected) {
+					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+				}
+				
+				//Process events
+				mEngine.ProcessEvents(1000);
 
 			//FLogger.Log(LogType.Debug, "hi tty!");
 			} else {
 				mEngine.Disconnect();
 				mIsConnected = false;
 			}
-		}
-		
-		//Destructor
-		public void Dispose() {
-			mEngine.Disconnect();
 		}
 	}
 }
