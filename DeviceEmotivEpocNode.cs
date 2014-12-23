@@ -113,8 +113,22 @@ namespace VVVV.Nodes
 		//Handle data on EmoState update
 		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) { 
 			EmoState lES = e.emoState;
+			float lEyeLidRight = 0;
+			float lEyeLidLeft = 0;
+			float lEyeX = 0;
+			float lEyeY = 0;
 			
 			FExpressiv[0] = lES.ExpressivIsBlink() ? 1.0 : 0.0;
+			FExpressiv[1] = lES.ExpressivIsRightWink() ? 1.0 : 0.0;
+			FExpressiv[2] = lES.ExpressivIsLeftWink() ? 1.0 : 0.0;
+			lES.ExpressivGetEyelidState(out lEyeLidLeft, out lEyeLidRight);
+			FExpressiv[3] = lEyeLidRight;
+			FExpressiv[4] = lEyeLidLeft;
+			lES.ExpressivGetEyeLocation(out lEyeX, out lEyeY);
+			FExpressiv[5] = lEyeX;
+			FExpressiv[6] = lEyeY;
+			
+			
 			Double rawScoreEc = 0, minScaleEc = 0, maxScaleEc = 0;
 			lES.AffectivGetExcitementShortTermModelParams(out rawScoreEc, out minScaleEc, out maxScaleEc);
 			FLogger.Log(LogType.Debug, "Excitement: " + lES.AffectivGetEngagementBoredomScore());
@@ -152,18 +166,21 @@ namespace VVVV.Nodes
 		
 		//Expressiv legend values
 		protected void ExpressivLegend() {
-			FExpressivLegend.SliceCount = 11;
+			FExpressivLegend.SliceCount = 14;
 			FExpressivLegend[0] = "Blink";
 			FExpressivLegend[1] = "Right Wink";
 			FExpressivLegend[2] = "Left Wink";
-			FExpressivLegend[3] = "Look Right/Left";
-			FExpressivLegend[4] = "Raise Brow";
-			FExpressivLegend[5] = "Furrow Brow";
-			FExpressivLegend[6] = "Smile";
-			FExpressivLegend[7] = "Clench";
-			FExpressivLegend[8] = "Right Smirk";
-			FExpressivLegend[9] = "Left Smirk";
-			FExpressivLegend[10] = "Laugh";
+			FExpressivLegend[3] = "Eyelid Right";
+			FExpressivLegend[4] = "Eyelid Left";
+			FExpressivLegend[5] = "Eyes Pos X";
+			FExpressivLegend[6] = "Eyes Pos Y";
+			FExpressivLegend[7] = "Raise Brow";
+			FExpressivLegend[8] = "Furrow Brow";
+			FExpressivLegend[9] = "Smile";
+			FExpressivLegend[10] = "Clench";
+			FExpressivLegend[11] = "Right Smirk";
+			FExpressivLegend[12] = "Left Smirk";
+			FExpressivLegend[13] = "Laugh";
 		}
 		
 		
