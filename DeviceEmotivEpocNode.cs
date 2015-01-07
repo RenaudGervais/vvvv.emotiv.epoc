@@ -48,17 +48,17 @@ namespace VVVV.Nodes
 		[Output("Expressiv Legend")]
 		public ISpread<string> FExpressivLegend;
 		
-		[Output("Expressiv Upper Face")]
-		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivUpper;
-		
-		[Output("Expressiv Upper Face Power")]
-		public ISpread<double> FExpressivUpperPower;
-		
-		[Output("Expressiv Lower Face")]
-		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivLower;
-		
-		[Output("Expressiv Lower Face Poser")]
-		public ISpread<double> FExpressivLowerPower;
+//		[Output("Expressiv Upper Face")]
+//		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivUpper;
+//		
+//		[Output("Expressiv Upper Face Power")]
+//		public ISpread<double> FExpressivUpperPower;
+//		
+//		[Output("Expressiv Lower Face")]
+//		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivLower;
+//		
+//		[Output("Expressiv Lower Face Poser")]
+//		public ISpread<double> FExpressivLowerPower;
 		
 		[Output("Affectiv Value")]
 		public ISpread<double> FAffectiv;
@@ -75,6 +75,7 @@ namespace VVVV.Nodes
 		
 		private EmoEngine mEngine;
 		private bool mIsConnected = false;
+//		private ISpread<double>
 		
 		//Contructor
 		public DeviceEmotivEpocNode() {
@@ -123,7 +124,10 @@ namespace VVVV.Nodes
 		
 		
 		//Handle data on EmoState update
-		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) { 
+		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) {
+			FExpressiv.SliceCount = 10;
+			FAffectiv.SliceCount = 5;
+			
 			EmoState lES = e.emoState;
 			float lEyeLidRight = 0;
 			float lEyeLidLeft = 0;
@@ -144,16 +148,18 @@ namespace VVVV.Nodes
 			FExpressiv[9] = lES.ExpressivGetClenchExtent();
 			
 			
-			FExpressivUpper[0] = lES.ExpressivGetUpperFaceAction();
-			FExpressivUpperPower[0] = lES.ExpressivGetUpperFaceActionPower();
+//			FExpressivUpper[0] = lES.ExpressivGetUpperFaceAction();
+//			FExpressivUpperPower[0] = lES.ExpressivGetUpperFaceActionPower();
+//			
+//			FExpressivLower[0] = lES.ExpressivGetLowerFaceAction();
+//			FExpressivLowerPower[0] = lES.ExpressivGetLowerFaceActionPower();
 			
-			FExpressivLower[0] = lES.ExpressivGetLowerFaceAction();
-			FExpressivLowerPower[0] = lES.ExpressivGetLowerFaceActionPower();
-			
-			
-			Double rawScoreEc = 0, minScaleEc = 0, maxScaleEc = 0;
-			lES.AffectivGetExcitementShortTermModelParams(out rawScoreEc, out minScaleEc, out maxScaleEc);
-			FLogger.Log(LogType.Debug, "Excitement: " + lES.AffectivGetEngagementBoredomScore());
+			string str = "";
+			FLogger.Log(LogType.Debug, "Event received:");
+			foreach(double d in FExpressiv) {
+				str += d;
+			}
+			FLogger.Log(LogType.Debug, str);
 		}
 
 		
@@ -181,8 +187,6 @@ namespace VVVV.Nodes
 			
 			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
-			FExpressiv.SliceCount = 13;
-			FAffectiv.SliceCount = 5;
 		}
 		
 		
