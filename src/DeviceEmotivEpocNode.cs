@@ -12,13 +12,13 @@ using Emotiv;
 using VVVV.Core.Logging;
 #endregion usings
 
-namespace VVVV.Nodes
+namespace VVVV.EmotivEpoc
 {
 	#region PluginInfo
 	[PluginInfo(Name = "EmotivEpoc",
 				Category = "Device",
-				Help = "Node to connect to the EmotivSDK and retrieve EmoStates",
-				Tags = "",
+				Help = "Get information from Emotiv Epoc device",
+				Tags = "Emotiv, Epoc, EEG",
 				AutoEvaluate = true)]
 	#endregion PluginInfo
 	public class DeviceEmotivEpocNode : IPluginEvaluate, IDisposable, IPartImportsSatisfiedNotification

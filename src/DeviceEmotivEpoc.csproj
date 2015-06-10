@@ -12,7 +12,7 @@
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ReferencePath>..\..\..\vvvv_45beta33.3_x64\lib\core\;..\..\..\vvvv_45beta33.3_x64\lib\nodes\plugins\</ReferencePath>
-    <NuGetPackageImportStamp>63b9b1b2</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>9721e4a2</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetEmotivSDK">
-      <HintPath>dll\DotNetEmotivSDK.dll</HintPath>
+      <HintPath>dependencies\$(PlatformTarget)\DotNetEmotivSDK.dll</HintPath>
     </Reference>
     <Reference Include="SlimDX" />
     <Reference Include="System" />
@@ -50,16 +50,17 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="VVVV.Core">
-      <HintPath>packages\VVVV.Core.33.7.0\lib\net40\VVVV.Core.dll</HintPath>
+      <HintPath>packages\VVVV.Core.32.0.0\lib\net40\VVVV.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VVVV.Utils">
-      <HintPath>packages\VVVV.Utils.33.7.0\lib\net40\VVVV.Utils.dll</HintPath>
+      <HintPath>packages\VVVV.Utils.32.0.0\lib\net40\VVVV.Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VVVV.Utils3rdParty" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpressivEmoStateNode.cs" />
     <Compile Include="DeviceEmotivEpocNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -73,8 +74,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.props'))" />
     <Error Condition="!Exists('packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.targets'))" />
-    <Error Condition="!Exists('packages\VVVV.PluginInterfaces.33.7.0\build\net40\VVVV.PluginInterfaces.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\VVVV.PluginInterfaces.33.7.0\build\net40\VVVV.PluginInterfaces.targets'))" />
+    <Error Condition="!Exists('packages\VVVV.PluginInterfaces.0.0.0\build\net40\VVVV.PluginInterfaces.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\VVVV.PluginInterfaces.0.0.0\build\net40\VVVV.PluginInterfaces.targets'))" />
   </Target>
   <Import Project="packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.targets" Condition="Exists('packages\VVVV.SlimDX.1.0.1\build\net40\VVVV.SlimDX.targets')" />
-  <Import Project="packages\VVVV.PluginInterfaces.33.7.0\build\net40\VVVV.PluginInterfaces.targets" Condition="Exists('packages\VVVV.PluginInterfaces.33.7.0\build\net40\VVVV.PluginInterfaces.targets')" />
+  <Import Project="packages\VVVV.PluginInterfaces.0.0.0\build\net40\VVVV.PluginInterfaces.targets" Condition="Exists('packages\VVVV.PluginInterfaces.0.0.0\build\net40\VVVV.PluginInterfaces.targets')" />
 </Project>
