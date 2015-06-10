@@ -1,0 +1,1 @@
+From the EmotivEpoch SDK, you should compile the DotNetEmotivSDK project yourself with the proper configuration and copy the dll here. Additionally, you should copy `edk.dll`.
