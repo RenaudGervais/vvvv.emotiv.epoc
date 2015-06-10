@@ -1,6 +1,8 @@
 ﻿#region usings
 using System;
 using System.ComponentModel.Composition;
+using System.Collections;
+using System.Collections.Generic;
 
 using VVVV.PluginInterfaces.V1;
 using VVVV.PluginInterfaces.V2;
@@ -21,7 +23,7 @@ namespace VVVV.EmotivEpoc
 				Tags = "Emotiv, Epoc, Expressiv, EmoState",
 				AutoEvaluate = true)]
 	#endregion PluginInfo
-	public class ExpressivEmoStateNode : IPluginEvaluate, IDisposable
+	public class ExpressivEmoStateNode : IPluginEvaluate
     {
         #region fields & pins
         [Input("EmoEngine", IsSingle = true)]

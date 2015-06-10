@@ -1,6 +1,8 @@
 #region usings
 using System;
 using System.ComponentModel.Composition;
+using System.Collections;
+using System.Collections.Generic;
 
 using VVVV.PluginInterfaces.V1;
 using VVVV.PluginInterfaces.V2;
