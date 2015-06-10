@@ -12,7 +12,7 @@ using Emotiv;
 using VVVV.Core.Logging;
 #endregion usings
 
-namespace VVVV.EmotivEpoch
+namespace VVVV.EmotivEpoc
 {
     #region PluginInfo
 	[PluginInfo(Name = "Expressiv",
@@ -25,7 +25,7 @@ namespace VVVV.EmotivEpoch
     {
         #region fields & pins
         [Input("EmoEngine", IsSingle = true)]
-        public ISpread<Emotiv.EmoEngine> iEmoEngine;
+        public ISpread<EmoEngine> iEmoEngine;
         #endregion fields & pins
 
         #region vars

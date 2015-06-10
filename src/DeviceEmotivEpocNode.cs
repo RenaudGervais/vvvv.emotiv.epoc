@@ -41,30 +41,9 @@ namespace VVVV.EmotivEpoc
 		
 		[Input("Connection Mode", IsSingle = true, DefaultEnumEntry = "EmoEngine")]
 		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
-		
-		[Output("Expressiv Value")]
-		public ISpread<double> FExpressiv;
-		
-		[Output("Expressiv Legend")]
-		public ISpread<string> FExpressivLegend;
-		
-//		[Output("Expressiv Upper Face")]
-//		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivUpper;
-//		
-//		[Output("Expressiv Upper Face Power")]
-//		public ISpread<double> FExpressivUpperPower;
-//		
-//		[Output("Expressiv Lower Face")]
-//		public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpressivLower;
-//		
-//		[Output("Expressiv Lower Face Poser")]
-//		public ISpread<double> FExpressivLowerPower;
-		
-		[Output("Affectiv Value")]
-		public ISpread<double> FAffectiv;
-		
-		[Output("Affectiv Legend")]
-		public ISpread<string> FAffectivLegend;
+
+        [Output("Device", IsSingle = true)]
+        public ISpread<EmoEngine> FEmoEngine;
 
 		[Output("Connected", IsToggle = true, IsSingle = true)]
 		public ISpread<bool> FConnected;
@@ -82,15 +61,16 @@ namespace VVVV.EmotivEpoc
 			mEngine = EmoEngine.Instance;
 			
 			//Register event handler
-			mEngine.EmoStateUpdated += new EmoEngine.EmoStateUpdatedEventHandler(EmoStateUpdated);
+            mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnected);
+            mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnected);
 		}
 		
 		
 		//I/O pin that needs to be setup only once after constructor
 		public void OnImportsSatisfied() {
-			//Set the legends as they won't change dynamically
-			ExpressivLegend();
-			AffectivLegend();
+            ////Set the legends as they won't change dynamically
+            //ExpressivLegend();
+            //AffectivLegend();
 		}
 		
 		
@@ -101,7 +81,7 @@ namespace VVVV.EmotivEpoc
 		
 		
 		//Create the connection
-		protected bool Connect(TEmotivConnectionMode iMode, string iServer) {
+		protected void Connect(TEmotivConnectionMode iMode, string iServer) {
 			switch(iMode) {
 				case TEmotivConnectionMode.EmoEngine:
 				mEngine.Connect();
@@ -116,51 +96,21 @@ namespace VVVV.EmotivEpoc
 				mEngine.RemoteConnect(iServer, 1726);
 				break;
 			}
-			
+		}
+
+
+        //Handling internal connection status
+        void EmoEngineConnected(object sender, EmoEngineEventArgs e)
+        {
+            mIsConnected = true;
 			FLogger.Log(LogType.Debug, "Connected!");
-			
-			return true;
-		}
-		
-		
-		//Handle data on EmoState update
-		protected void EmoStateUpdated(object sender, EmoStateUpdatedEventArgs e) {
-			FExpressiv.SliceCount = 10;
-			FAffectiv.SliceCount = 5;
-			
-			EmoState lES = e.emoState;
-			float lEyeLidRight = 0;
-			float lEyeLidLeft = 0;
-			float lEyeX = 0;
-			float lEyeY = 0;
-			
-			FExpressiv[0] = lES.ExpressivIsBlink() ? 1.0 : 0.0;
-			FExpressiv[1] = lES.ExpressivIsRightWink() ? 1.0 : 0.0;
-			FExpressiv[2] = lES.ExpressivIsLeftWink() ? 1.0 : 0.0;
-			lES.ExpressivGetEyelidState(out lEyeLidLeft, out lEyeLidRight);
-			FExpressiv[3] = lEyeLidRight;
-			FExpressiv[4] = lEyeLidLeft;
-			lES.ExpressivGetEyeLocation(out lEyeX, out lEyeY);
-			FExpressiv[5] = lEyeX;
-			FExpressiv[6] = lEyeY;
-			FExpressiv[7] = lES.ExpressivGetEyebrowExtent();
-			FExpressiv[8] = lES.ExpressivGetSmileExtent();
-			FExpressiv[9] = lES.ExpressivGetClenchExtent();
-			
-			
-//			FExpressivUpper[0] = lES.ExpressivGetUpperFaceAction();
-//			FExpressivUpperPower[0] = lES.ExpressivGetUpperFaceActionPower();
-//			
-//			FExpressivLower[0] = lES.ExpressivGetLowerFaceAction();
-//			FExpressivLowerPower[0] = lES.ExpressivGetLowerFaceActionPower();
-			
-			string str = "";
-			FLogger.Log(LogType.Debug, "Event received:");
-			foreach(double d in FExpressiv) {
-				str += d;
-			}
-			FLogger.Log(LogType.Debug, str);
-		}
+        }
+
+        void EmoEngineDisconnected(object sender, EmoEngineEventArgs e)
+        {
+            mIsConnected = false;
+            FLogger.Log(LogType.Debug, "Disconnected!");
+        }
 
 		
 		//called when data for any output pin is requested
@@ -168,52 +118,55 @@ namespace VVVV.EmotivEpoc
 		{
 			if(FConnect.IsChanged) {
 				if(FConnect[0] && !mIsConnected)
-					mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+					Connect(ConnectionMode[0], FServer[0]);
 				else {
 					mEngine.Disconnect();
-					mIsConnected = false;
 				}
 			}
 			
 			if((FServer.IsChanged || ConnectionMode.IsChanged) && mIsConnected) {
 				mEngine.Disconnect();
-				mIsConnected = Connect(ConnectionMode[0], FServer[0]);
+				Connect(ConnectionMode[0], FServer[0]);
 			}
 			
 			if(mIsConnected) {
 				//Process events
 				mEngine.ProcessEvents(1000);
 			}
+
+            //Fill the output pins
+            FEmoEngine.SliceCount = 1;
+            FEmoEngine[0] = mEngine;
 			
 			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
 		}
 		
 		
-		//Expressiv legend values
-		protected void ExpressivLegend() {
-			FExpressivLegend.SliceCount = 10;
-			FExpressivLegend[0] = "Blink";
-			FExpressivLegend[1] = "Right Wink";
-			FExpressivLegend[2] = "Left Wink";
-			FExpressivLegend[3] = "Eyelid Right";
-			FExpressivLegend[4] = "Eyelid Left";
-			FExpressivLegend[5] = "Eyes Pos X";
-			FExpressivLegend[6] = "Eyes Pos Y";
-			FExpressivLegend[7] = "Eyebrow Extent";
-			FExpressivLegend[8] = "Smile";
-			FExpressivLegend[9] = "Clench";
-		}
+        ////Expressiv legend values
+        //protected void ExpressivLegend() {
+        //    FExpressivLegend.SliceCount = 10;
+        //    FExpressivLegend[0] = "Blink";
+        //    FExpressivLegend[1] = "Right Wink";
+        //    FExpressivLegend[2] = "Left Wink";
+        //    FExpressivLegend[3] = "Eyelid Right";
+        //    FExpressivLegend[4] = "Eyelid Left";
+        //    FExpressivLegend[5] = "Eyes Pos X";
+        //    FExpressivLegend[6] = "Eyes Pos Y";
+        //    FExpressivLegend[7] = "Eyebrow Extent";
+        //    FExpressivLegend[8] = "Smile";
+        //    FExpressivLegend[9] = "Clench";
+        //}
 		
 		
-		//Affectiv legend values
-		protected void AffectivLegend() {
-			FAffectivLegend.SliceCount = 5;
-			FAffectivLegend[0] = "Engagement/Boredom";
-			FAffectivLegend[1] = "Frustration";
-			FAffectivLegend[2] = "Meditation";
-			FAffectivLegend[3] = "Instantaneous Excitement";
-			FAffectivLegend[4] = "Long Term Excitement";
-		}
+        ////Affectiv legend values
+        //protected void AffectivLegend() {
+        //    FAffectivLegend.SliceCount = 5;
+        //    FAffectivLegend[0] = "Engagement/Boredom";
+        //    FAffectivLegend[1] = "Frustration";
+        //    FAffectivLegend[2] = "Meditation";
+        //    FAffectivLegend[3] = "Instantaneous Excitement";
+        //    FAffectivLegend[4] = "Long Term Excitement";
+        //}
 	}
 }
