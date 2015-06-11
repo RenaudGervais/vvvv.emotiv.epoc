@@ -67,16 +67,23 @@ namespace VVVV.EmotivEpoc
 
         [Output("Boredom Scaled Score")]
         public ISpread<double> FBoredomScaled;
+
+        [Output("Affectiv Algo List")]
+        public ISpread<EdkDll.EE_AffectivAlgo_t> FAffAlgoList;
+
+        [Output("Affectiv Active Algo", IsToggle = true)]
+        public ISpread<bool> FAffActiveAlgo;
         #endregion fields & pins
 
 
         #region vars
-        private EdkDll.EE_AffectivAlgo_t[] mAffAlgoList = { 
+        private static EdkDll.EE_AffectivAlgo_t[] mAffAlgoList = { 
                                                       EdkDll.EE_AffectivAlgo_t.AFF_ENGAGEMENT_BOREDOM,
                                                       EdkDll.EE_AffectivAlgo_t.AFF_EXCITEMENT,
                                                       EdkDll.EE_AffectivAlgo_t.AFF_FRUSTRATION,
                                                       EdkDll.EE_AffectivAlgo_t.AFF_MEDITATION,
                                                       };
+        private Boolean[] mIsAffActiveList = new Boolean[mAffAlgoList.Length];
         private Single mLongTermExcitementScore = 0;
         private Single mShortTermExcitementScore = 0;
         private Single mMeditationScore = 0;
@@ -95,13 +102,11 @@ namespace VVVV.EmotivEpoc
 
             Single timeFromStart = es.GetTimeFromStart();
 
-            Boolean[] isAffActiveList = new Boolean[mAffAlgoList.Length];
-
             mLongTermExcitementScore = es.AffectivGetExcitementLongTermScore();
             mShortTermExcitementScore = es.AffectivGetExcitementShortTermScore();
             for (int i = 0; i < mAffAlgoList.Length; ++i)
             {
-                isAffActiveList[i] = es.AffectivIsActive(mAffAlgoList[i]);
+                mIsAffActiveList[i] = es.AffectivIsActive(mAffAlgoList[i]);
             }
 
             mMeditationScore = es.AffectivGetMeditationScore();
@@ -182,7 +187,66 @@ namespace VVVV.EmotivEpoc
             if (FEmoState.IsChanged && FEmoState.SliceCount > 0)
                 AffectivEmoStateUpdated();
 
-            //Output data to pins
+            //Output data to pins 
+            //  Long and Short term excitement scores
+            FLTExcScore.SliceCount = 1;
+            FLTExcScore[0] = mLongTermExcitementScore;
+
+            FSTExcScore.SliceCount = 1;
+            FSTExcScore[0] = mShortTermExcitementScore;
+
+            FSTExcModelParams.SliceCount = 3;
+            FSTExcModelParams[0] = mRawScoreEc;
+            FSTExcModelParams[1] = mMinScaleEc;
+            FSTExcModelParams[2] = mMaxScaleEc;
+
+            FSTExcScaled.SliceCount = 1;
+            FSTExcScaled[0] = mScaledScoreEc;
+
+            //  Meditation scores
+            FMeditationScore.SliceCount = 1;
+            FMeditationScore[0] = mMeditationScore;
+
+            FMeditationModelParams.SliceCount = 3;
+            FMeditationModelParams[0] = mRawScoreMd;
+            FMeditationModelParams[1] = mMinScaleMd;
+            FMeditationModelParams[2] = mMaxScaleMd;
+
+            FMeditationScaled.SliceCount = 1;
+            FMeditationScaled[0] = mScaledScoreMd;
+
+            //  Frustration scores
+            FFrustrationScore.SliceCount = 1;
+            FFrustrationScore[0] = mFrustrationScore;
+
+            FFrustrationModelParams.SliceCount = 3;
+            FFrustrationModelParams[0] = mRawScoreFt;
+            FFrustrationModelParams[1] = mMinScaleFt;
+            FFrustrationModelParams[2] = mMaxScaleFt;
+
+            FFrustrationScaled.SliceCount = 1;
+            FFrustrationScaled[0] = mScaledScoreFt;
+
+            //  Boredom scores
+            FBoredomScore.SliceCount = 1;
+            FBoredomScore[0] = mBoredomScore;
+
+            FBoredomModelParams.SliceCount = 3;
+            FBoredomModelParams[0] = mRawScoreEg;
+            FBoredomModelParams[1] = mMinScaleEg;
+            FBoredomModelParams[2] = mMaxScaleEg;
+
+            FBoredomScaled.SliceCount = 1;
+            FBoredomScaled[0] = mScaledScoreEg;
+
+            //  List of active Affectiv algo
+            FAffAlgoList.SliceCount = mAffAlgoList.Length;
+            for (int i = 0; i < mAffAlgoList.Length; ++i)
+                FAffAlgoList[i] = mAffAlgoList[i];
+
+            FAffActiveAlgo.SliceCount = mIsAffActiveList.Length;
+            for (int i = 0; i < mIsAffActiveList.Length; ++i)
+                FAffActiveAlgo[i] = mIsAffActiveList[i];
         }
     }
 }
