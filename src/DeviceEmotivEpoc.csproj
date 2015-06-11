@@ -57,7 +57,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetEmotivSDK">
-      <HintPath>dependencies\$(PlatformTarget)\DotNetEmotivSDK.dll</HintPath>
+      <HintPath>dependencies\$(PlatformTarget)\DotNetEmotivSDK-vs2010.dll</HintPath>
     </Reference>
     <Reference Include="SlimDX" />
     <Reference Include="System" />
@@ -78,8 +78,8 @@
     <Reference Include="VVVV.Utils3rdParty" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressivEmoStateNode.cs" />
-    <Compile Include="DeviceEmotivEpocNode.cs" />
+    <Compile Include="Nodes\ExpressivEmoStateNode.cs" />
+    <Compile Include="Nodes\DeviceEmotivEpocNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
