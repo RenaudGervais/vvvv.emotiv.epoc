@@ -44,8 +44,8 @@ namespace VVVV.EmotivEpoc
 		[Input("Connection Mode", IsSingle = true, DefaultEnumEntry = "EmoEngine")]
 		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
 
-        [Output("Device", IsSingle = true)]
-        public ISpread<EmoEngine> FEmoEngine;
+        [Output("EmoState", IsSingle = true)]
+        public ISpread<EmoState> FEmoEmoState;
 
         [Output("Headset On", IsToggle = true)]
         public ISpread<bool> FHeadsetOn;
@@ -71,6 +71,7 @@ namespace VVVV.EmotivEpoc
 		
 		//Member variables
         private EmoEngine mEngine;
+        private EmoState mEmoState;
         private bool mIsHeadsetOn = false;
         private EdkDll.EE_EEG_ContactQuality_t[] mCQ = new EdkDll.EE_EEG_ContactQuality_t[] { EdkDll.EE_EEG_ContactQuality_t.EEG_CQ_NO_SIGNAL };
         private EdkDll.EE_SignalStrength_t mSignalStrength;
@@ -151,6 +152,7 @@ namespace VVVV.EmotivEpoc
             //Update connexion status
             lock(syncLock)
             {
+                mEmoState = es;
                 mIsHeadsetOn = es.GetHeadsetOn() != 0;
                 mCQ = es.GetContactQualityFromAllChannels();
                 mSignalStrength = es.GetWirelessSignalStatus();
@@ -181,13 +183,12 @@ namespace VVVV.EmotivEpoc
 			}
 
             //Fill the output pins
-            FEmoEngine.SliceCount = 1;
-            FEmoEngine[0] = mEngine;
-
             if (mIsConnected)
             {
                 lock (syncLock)
                 {
+                    FEmoEmoState.SliceCount = 1;
+                    FEmoEmoState[0] = mEmoState;
                     FHeadsetOn.SliceCount = 1;
                     FHeadsetOn[0] = mIsHeadsetOn;
                     FCQ.SliceCount = mCQ.Length;
