@@ -72,7 +72,7 @@ namespace VVVV.EmotivEpoc
 		//Member variables
         private EmoEngine mEngine;
         private bool mIsHeadsetOn = false;
-        private EdkDll.EE_EEG_ContactQuality_t[] mCQ;
+        private EdkDll.EE_EEG_ContactQuality_t[] mCQ = new EdkDll.EE_EEG_ContactQuality_t[] { EdkDll.EE_EEG_ContactQuality_t.EEG_CQ_NO_SIGNAL };
         private EdkDll.EE_SignalStrength_t mSignalStrength;
         private Int32 mBatteryCharge = 0;
         private Int32 mBatteryMaxCharge = 0;
@@ -117,7 +117,6 @@ namespace VVVV.EmotivEpoc
 				break;
 				
 				case TEmotivConnectionMode.EmoComposer:
-				FLogger.Log(LogType.Debug, "Connecting...");
 				mEngine.RemoteConnect(iServer, 1726);
 				break;
 			}
@@ -128,13 +127,21 @@ namespace VVVV.EmotivEpoc
         protected void EmoEngineConnectedCB(object sender, EmoEngineEventArgs e)
         {
             mIsConnected = true;
-			FLogger.Log(LogType.Debug, "Connected!");
         }
 
         protected void EmoEngineDisconnectedCB(object sender, EmoEngineEventArgs e)
         {
             mIsConnected = false;
-            FLogger.Log(LogType.Debug, "Disconnected!");
+            
+            //Reset device status
+            lock(syncLock)
+            {
+                mIsHeadsetOn = false;
+                mCQ = new EdkDll.EE_EEG_ContactQuality_t[] {EdkDll.EE_EEG_ContactQuality_t.EEG_CQ_NO_SIGNAL};
+                mSignalStrength = EdkDll.EE_SignalStrength_t.NO_SIGNAL;
+                mBatteryCharge = 0;
+                mBatteryMaxCharge = 0;
+            }
         }
 
         protected void EmoEngineEmoStateUpdatedCB(object sender, EmoStateUpdatedEventArgs e)
@@ -198,32 +205,5 @@ namespace VVVV.EmotivEpoc
 			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
 		}
-		
-		
-        ////Expressiv legend values
-        //protected void ExpressivLegend() {
-        //    FExpressivLegend.SliceCount = 10;
-        //    FExpressivLegend[0] = "Blink";
-        //    FExpressivLegend[1] = "Right Wink";
-        //    FExpressivLegend[2] = "Left Wink";
-        //    FExpressivLegend[3] = "Eyelid Right";
-        //    FExpressivLegend[4] = "Eyelid Left";
-        //    FExpressivLegend[5] = "Eyes Pos X";
-        //    FExpressivLegend[6] = "Eyes Pos Y";
-        //    FExpressivLegend[7] = "Eyebrow Extent";
-        //    FExpressivLegend[8] = "Smile";
-        //    FExpressivLegend[9] = "Clench";
-        //}
-		
-		
-        ////Affectiv legend values
-        //protected void AffectivLegend() {
-        //    FAffectivLegend.SliceCount = 5;
-        //    FAffectivLegend[0] = "Engagement/Boredom";
-        //    FAffectivLegend[1] = "Frustration";
-        //    FAffectivLegend[2] = "Meditation";
-        //    FAffectivLegend[3] = "Instantaneous Excitement";
-        //    FAffectivLegend[4] = "Long Term Excitement";
-        //}
 	}
 }
