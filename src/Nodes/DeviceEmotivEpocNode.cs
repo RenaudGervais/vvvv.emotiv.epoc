@@ -69,9 +69,16 @@ namespace VVVV.EmotivEpoc
 		public ILogger FLogger;
 		#endregion fields & pins
 		
-		private EmoEngine mEngine;
+		//Member variables
+        private EmoEngine mEngine;
+        private bool mIsHeadsetOn = false;
+        private EdkDll.EE_EEG_ContactQuality_t[] mCQ;
+        private EdkDll.EE_SignalStrength_t mSignalStrength;
+        private Int32 mBatteryCharge = 0;
+        private Int32 mBatteryMaxCharge = 0;
 		private bool mIsConnected = false;
-//		private ISpread<double>
+
+        private static object syncLock = new Object();
 		
 		//Contructor
 		public DeviceEmotivEpocNode() {
@@ -80,6 +87,7 @@ namespace VVVV.EmotivEpoc
 			//Register event handler
             mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnectedCB);
             mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnectedCB);
+            mEngine.EmoEngineEmoStateUpdated += new EmoEngine.EmoEngineEmoStateUpdatedEventHandler(EmoEngineEmoStateUpdatedCB);
 		}
 		
 		
@@ -129,9 +137,18 @@ namespace VVVV.EmotivEpoc
             FLogger.Log(LogType.Debug, "Disconnected!");
         }
 
-        protected void EmoEngineEmoStateUpdatedCB(object sender, EmoEngineEventArgs e)
+        protected void EmoEngineEmoStateUpdatedCB(object sender, EmoStateUpdatedEventArgs e)
         {
+            EmoState es = e.emoState;
+
             //Update connexion status
+            lock(syncLock)
+            {
+                mIsHeadsetOn = es.GetHeadsetOn() != 0;
+                mCQ = es.GetContactQualityFromAllChannels();
+                mSignalStrength = es.GetWirelessSignalStatus();
+                es.GetBatteryChargeLevel(out mBatteryCharge, out mBatteryMaxCharge);
+            }
         }
 
 		
@@ -159,6 +176,24 @@ namespace VVVV.EmotivEpoc
             //Fill the output pins
             FEmoEngine.SliceCount = 1;
             FEmoEngine[0] = mEngine;
+
+            if (mIsConnected)
+            {
+                lock (syncLock)
+                {
+                    FHeadsetOn.SliceCount = 1;
+                    FHeadsetOn[0] = mIsHeadsetOn;
+                    FCQ.SliceCount = mCQ.Length;
+                    for (int i = 0; i < mCQ.Length; ++i)
+                        FCQ[i] = mCQ[i];
+                    FSignalStrength.SliceCount = 1;
+                    FSignalStrength[0] = mSignalStrength;
+                    FBatteryCharge.SliceCount = 1;
+                    FBatteryCharge[0] = mBatteryCharge;
+                    FBatteryMaxCharge.SliceCount = 1;
+                    FBatteryMaxCharge[0] = mBatteryMaxCharge;
+                }
+            }
 			
 			FConnected.SliceCount = 1;
 			FConnected[0] = mIsConnected;
