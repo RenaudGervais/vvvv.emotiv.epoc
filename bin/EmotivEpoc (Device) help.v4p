@@ -1,0 +1,341 @@
+<!DOCTYPE PATCH  SYSTEM "http://vvvv.org/versions/vvvv45beta33.7.dtd" >
+   <PATCH nodename="C:\vvvv\contributions\plugins\emotiv\bin\EmotivEpoc (Device) help.v4p" scrollx="0" scrolly="-360">
+   <BOUNDS type="Window" left="8355" top="3990" width="13530" height="11505">
+   </BOUNDS>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="3" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="225" top="225" width="5100" height="450">
+   </BOUNDS>
+   <BOUNDS type="Box" left="225" top="225" width="5100" height="450">
+   </BOUNDS>
+   <PIN pinname="Input String" slicecount="1" visible="0" values="|EmotivEpoc (Device)|">
+   </PIN>
+   <PIN pinname="Output String" slicecount="1" visible="0" values="||">
+   </PIN>
+   <PIN pinname="Size" slicecount="1" visible="1" values="14">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="2" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="225" top="600" width="5100" height="600">
+   </BOUNDS>
+   <BOUNDS type="Box" left="225" top="600" width="5100" height="600">
+   </BOUNDS>
+   <PIN pinname="Input String" slicecount="1" visible="0" values="|Get information from Emotiv Epoc device|">
+   </PIN>
+   <PIN pinname="Output String" slicecount="1" visible="0" values="||">
+   </PIN>
+   </NODE>
+   <NODE nodename="EmotivEpoc (Device)" componentmode="Hidden" id="0" systemname="EmotivEpoc (Device)" filename="DeviceEmotivEpoc.dll">
+   <BOUNDS type="Node" left="1500" top="2760" width="6645" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="1500" top="2760" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Connect" visible="1">
+   </PIN>
+   <PIN pinname="Server" visible="1">
+   </PIN>
+   <PIN pinname="Connection Mode" visible="1">
+   </PIN>
+   <PIN pinname="Connected" visible="1">
+   </PIN>
+   <PIN pinname="Time From Start" visible="1">
+   </PIN>
+   <PIN pinname="Battery Max Level" visible="1">
+   </PIN>
+   <PIN pinname="Battery Level" visible="1">
+   </PIN>
+   <PIN pinname="Signal Strength" visible="1">
+   </PIN>
+   <PIN pinname="Contact Quality" visible="1">
+   </PIN>
+   <PIN pinname="Headset On" visible="1">
+   </PIN>
+   <PIN pinname="EmoState" visible="1">
+   </PIN>
+   </NODE>
+   <PACK Name="image" Version="0.2.0">
+   </PACK>
+   <PACK Name="addonpack" Version="33.7.0">
+   </PACK>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="4" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="1500" top="1470" width="480" height="480">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1500" top="1470" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Y Input Value" slicecount="1" visible="1" values="0">
+   </PIN>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Boolean">
+   </PIN>
+   <PIN pinname="Behavior" slicecount="1" values="Toggle">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Connect">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="4" srcpinname="Y Output Value" dstnodeid="0" dstpinname="Connect">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="5" systemname="IOBox (String)">
+   <BOUNDS type="Box" left="4770" top="2235" width="930" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="4770" top="2235" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Input String" slicecount="1" visible="1" values="127.0.0.1">
+   </PIN>
+   <PIN pinname="Default" slicecount="1" values="127.0.0.1">
+   </PIN>
+   <PIN pinname="File Mask" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Maximum Characters" slicecount="1" values="-1">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Server">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="5" srcpinname="Output String" dstnodeid="0" dstpinname="Server">
+   </LINK>
+   <NODE nodename="IOBox (Enumerations)" componentmode="InABox" id="6" systemname="IOBox (Enumerations)">
+   <BOUNDS type="Box" left="8085" top="1350" width="1725" height="945">
+   </BOUNDS>
+   <BOUNDS type="Node" left="8085" top="1350" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Input Enum" slicecount="1" visible="1" values="EmoEngine">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Connection Mode|">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="Style" slicecount="1" values="List">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="6" srcpinname="Output Enum" dstnodeid="0" dstpinname="Connection Mode">
+   </LINK>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="7" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="8100" top="3495" width="480" height="480">
+   </BOUNDS>
+   <BOUNDS type="Node" left="8100" top="3495" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Boolean">
+   </PIN>
+   <PIN pinname="Behavior" slicecount="1" values="Toggle">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Connected">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Connected" dstnodeid="7" dstpinname="Y Input Value">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="8" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="9960" top="1320" width="2970" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="9960" top="1320" width="3240" height="2085">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|You can connect in three different ways:&cr;&lf;* EmoEngine: Connect directly to the device&cr;&lf;* EmotivControlPanel: Connect to a running Control Panel instance to which you can either connect an EmoComposer or a EmoEngine device&cr;&lf;* EmoComposer: Received data from the EmoComposer emulator, useful for debug purposes|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="9" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="7155" top="4395" width="795" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="7155" top="4395" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Time From Start|">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Time From Start" dstnodeid="9" dstpinname="Y Input Value">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="10" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="8085" top="4380" width="2730" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="8085" top="4380" width="2730" height="270">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|&lt; Time since the device is connected|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="11" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="6225" top="4875" width="795" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="6225" top="4875" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Integer">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Battery Max Level|">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Battery Max Level" dstnodeid="11" dstpinname="Y Input Value">
+   </LINK>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="12" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="5280" top="5370" width="795" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="5280" top="5370" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Integer">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Battery Level|">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Battery Level" dstnodeid="12" dstpinname="Y Input Value">
+   </LINK>
+   <NODE systemname="Enum2String (Enumerations)" nodename="Enum2String (Enumerations)" componentmode="Hidden" id="14">
+   <BOUNDS type="Node" left="4320" top="6030" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Enum" visible="1">
+   </PIN>
+   <PIN pinname="String Value" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Signal Strength" dstnodeid="14" dstpinname="Enum">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="15" systemname="IOBox (String)">
+   <BOUNDS type="Box" left="4305" top="6525" width="1380" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="4305" top="6525" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Default" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="File Mask" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Maximum Characters" slicecount="1" values="-1">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Signal Strenght|">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="14" srcpinname="String Value" dstnodeid="15" dstpinname="Input String">
+   </LINK>
+   <NODE systemname="Enum2String (Enumerations)" nodename="Enum2String (Enumerations)" componentmode="Hidden" id="16">
+   <BOUNDS type="Node" left="3360" top="5565" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Enum" visible="1" slicecount="1" values="(nil)">
+   </PIN>
+   <PIN pinname="String Value" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Contact Quality" dstnodeid="16" dstpinname="Enum">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="17" systemname="IOBox (String)">
+   <BOUNDS type="Box" left="3360" top="7230" width="1755" height="3345">
+   </BOUNDS>
+   <BOUNDS type="Node" left="3360" top="7230" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Default" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="File Mask" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Maximum Characters" slicecount="1" values="-1">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Contact Quality|">
+   </PIN>
+   <PIN pinname="Rows" slicecount="1" values="18">
+   </PIN>
+   <PIN pinname="SliceCount Mode" slicecount="1" values="Maximum">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="16" srcpinname="String Value" dstnodeid="17" dstpinname="Input String">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="18" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="5250" top="7350" width="3315" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="5250" top="7350" width="3315" height="270">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|&lt; Signal quality for each of the 18 electrodes|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="19" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="2445" top="3780" width="480" height="480">
+   </BOUNDS>
+   <BOUNDS type="Node" left="2445" top="3780" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Boolean">
+   </PIN>
+   <PIN pinname="Behavior" slicecount="1" values="Toggle">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="|Headset On|">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="Headset On" dstnodeid="19" dstpinname="Y Input Value">
+   </LINK>
+   <NODE nodename="IOBox (Node)" componentmode="InABox" id="20" systemname="IOBox (Node)">
+   <BOUNDS type="Box" left="1515" top="5295" width="795" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1515" top="5295" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Descriptive Name" slicecount="1" values="EmoState">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="0" srcpinname="EmoState" dstnodeid="20" dstpinname="Input Node">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="21" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="1350" top="5910" width="3630" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="1350" top="5910" width="1455" height="765">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|An EmoState can be parsed by the different nodes:|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE systemname="Expressiv (EmoState)" filename="DeviceEmotivEpoc.dll" nodename="Expressiv (EmoState)" componentmode="Hidden" id="22">
+   <BOUNDS type="Node" left="285" top="6780" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="285" top="6780">
+   </BOUNDS>
+   </NODE>
+   <NODE systemname="Affectiv (EmoState)" filename="DeviceEmotivEpoc.dll" nodename="Affectiv (EmoState)" componentmode="Hidden" id="23">
+   <BOUNDS type="Node" left="285" top="7275" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="285" top="7275">
+   </BOUNDS>
+   </NODE>
+   <NODE systemname="Cognitiv (EmoState)" filename="DeviceEmotivEpoc.dll" nodename="Cognitiv (EmoState)" componentmode="Hidden" id="24">
+   <BOUNDS type="Node" left="285" top="7770" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="285" top="7770">
+   </BOUNDS>
+   </NODE>
+   </PATCH>
