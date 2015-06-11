@@ -62,6 +62,9 @@ namespace VVVV.EmotivEpoc
         [Output("Battery Max Level")]
         public ISpread<Int32> FBatteryMaxCharge;
 
+        [Output("Time From Start")]
+        public ISpread<Single> FTimeFromStart;
+
 		[Output("Connected", IsToggle = true, IsSingle = true)]
 		public ISpread<bool> FConnected;
 
@@ -77,6 +80,7 @@ namespace VVVV.EmotivEpoc
         private EdkDll.EE_SignalStrength_t mSignalStrength;
         private Int32 mBatteryCharge = 0;
         private Int32 mBatteryMaxCharge = 0;
+        private Single mTimeFromStart = 0;
 		private bool mIsConnected = false;
 
         private static object syncLock = new Object();
@@ -142,6 +146,7 @@ namespace VVVV.EmotivEpoc
                 mSignalStrength = EdkDll.EE_SignalStrength_t.NO_SIGNAL;
                 mBatteryCharge = 0;
                 mBatteryMaxCharge = 0;
+                mTimeFromStart = 0;
             }
         }
 
@@ -157,6 +162,7 @@ namespace VVVV.EmotivEpoc
                 mCQ = es.GetContactQualityFromAllChannels();
                 mSignalStrength = es.GetWirelessSignalStatus();
                 es.GetBatteryChargeLevel(out mBatteryCharge, out mBatteryMaxCharge);
+                mTimeFromStart = es.GetTimeFromStart();
             }
         }
 
@@ -194,17 +200,25 @@ namespace VVVV.EmotivEpoc
                     }
                     else
                         FEmoState.SliceCount = 0;
+                    
                     FHeadsetOn.SliceCount = 1;
                     FHeadsetOn[0] = mIsHeadsetOn;
+                    
                     FCQ.SliceCount = mCQ.Length;
                     for (int i = 0; i < mCQ.Length; ++i)
                         FCQ[i] = mCQ[i];
+                    
                     FSignalStrength.SliceCount = 1;
                     FSignalStrength[0] = mSignalStrength;
+                    
                     FBatteryCharge.SliceCount = 1;
                     FBatteryCharge[0] = mBatteryCharge;
+                    
                     FBatteryMaxCharge.SliceCount = 1;
                     FBatteryMaxCharge[0] = mBatteryMaxCharge;
+
+                    FTimeFromStart.SliceCount = 1;
+                    FTimeFromStart[0] = mTimeFromStart;
                 }
             }
 			
