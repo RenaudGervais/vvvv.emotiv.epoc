@@ -47,6 +47,21 @@ namespace VVVV.EmotivEpoc
         [Output("Device", IsSingle = true)]
         public ISpread<EmoEngine> FEmoEngine;
 
+        [Output("Headset On", IsToggle = true)]
+        public ISpread<bool> FHeadsetOn;
+
+        [Output("Contact Quality")]
+        public ISpread<EdkDll.EE_EEG_ContactQuality_t> FCQ;
+
+        [Output("Signal Strength")]
+        public ISpread<EdkDll.EE_SignalStrength_t> FSignalStrength;
+
+        [Output("Battery Level")]
+        public ISpread<Int32> FBatteryCharge;
+
+        [Output("Battery Max Level")]
+        public ISpread<Int32> FBatteryMaxCharge;
+
 		[Output("Connected", IsToggle = true, IsSingle = true)]
 		public ISpread<bool> FConnected;
 
@@ -63,8 +78,8 @@ namespace VVVV.EmotivEpoc
 			mEngine = EmoEngine.Instance;
 			
 			//Register event handler
-            mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnected);
-            mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnected);
+            mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnectedCB);
+            mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnectedCB);
 		}
 		
 		
@@ -102,16 +117,21 @@ namespace VVVV.EmotivEpoc
 
 
         //Handling internal connection status
-        void EmoEngineConnected(object sender, EmoEngineEventArgs e)
+        protected void EmoEngineConnectedCB(object sender, EmoEngineEventArgs e)
         {
             mIsConnected = true;
 			FLogger.Log(LogType.Debug, "Connected!");
         }
 
-        void EmoEngineDisconnected(object sender, EmoEngineEventArgs e)
+        protected void EmoEngineDisconnectedCB(object sender, EmoEngineEventArgs e)
         {
             mIsConnected = false;
             FLogger.Log(LogType.Debug, "Disconnected!");
+        }
+
+        protected void EmoEngineEmoStateUpdatedCB(object sender, EmoEngineEventArgs e)
+        {
+            //Update connexion status
         }
 
 		

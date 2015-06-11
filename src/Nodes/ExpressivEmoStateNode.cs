@@ -18,8 +18,8 @@ namespace VVVV.EmotivEpoc
 {
     #region PluginInfo
 	[PluginInfo(Name = "Expressiv",
-				Category = "Emotiv EmoState",
-				Help = "Exposes the Expressiv properties of an EmoState (facial expression)",
+				Category = "EmoState",
+				Help = "Exposes the Expressiv properties of an EmoState, i.e. facial expression",
 				Tags = "Emotiv, Epoc, Expressiv, EmoState",
 				AutoEvaluate = true)]
 	#endregion PluginInfo
