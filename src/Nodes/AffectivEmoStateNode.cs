@@ -28,6 +28,45 @@ namespace VVVV.EmotivEpoc
         #region fields & pins
         [Input("EmoState")]
         public IDiffSpread<EmoState> FEmoState;
+
+        [Output("Long Term Excitement Score")]
+        public ISpread<Single> FLTExcScore;
+
+        [Output("Short Term Excitement Score")]
+        public ISpread<Single> FSTExcScore;
+
+        [Output("Short Term Excitement Model Params")]
+        public ISpread<double> FSTExcModelParams;
+
+        [Output("Short Term Excitement Scaled Score")]
+        public ISpread<double> FSTExcScaled;
+
+        [Output("Meditation Score")]
+        public ISpread<Single> FMeditationScore;
+
+        [Output("Meditation Model Params")]
+        public ISpread<double> FMeditationModelParams;
+
+        [Output("Meditation Scaled Score")]
+        public ISpread<double> FMeditationScaled;
+
+        [Output("Frustration Score")]
+        public ISpread<Single> FFrustrationScore;
+
+        [Output("Frustration Model Params")]
+        public ISpread<double> FFrustrationModelParams;
+
+        [Output("Frustration Scaled Score")]
+        public ISpread<double> FFrustrationScaled;
+
+        [Output("Boredom Score")]
+        public ISpread<Single> FBoredomScore;
+
+        [Output("Boredom Model Params")]
+        public ISpread<double> FBoredomModelParams;
+
+        [Output("Boredom Scaled Score")]
+        public ISpread<double> FBoredomScaled;
         #endregion fields & pins
 
 
