@@ -177,7 +177,7 @@ namespace VVVV.EmotivEpoc
         //Processing loop
         public void Evaluate(int SpreadMax)
         {
-            if (FEmoState.IsChanged)
+            if (FEmoState.IsChanged && FEmoState.SliceCount > 0)
                 ExpressivEmoStateUpdated();
 
             //Output data to pins
