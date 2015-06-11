@@ -87,20 +87,24 @@ namespace VVVV.EmotivEpoc
 		
 		//Contructor
 		public DeviceEmotivEpocNode() {
-			mEngine = EmoEngine.Instance;
-			
-			//Register event handler
-            mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnectedCB);
-            mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnectedCB);
-            mEngine.EmoEngineEmoStateUpdated += new EmoEngine.EmoEngineEmoStateUpdatedEventHandler(EmoEngineEmoStateUpdatedCB);
+            try
+            {
+                mEngine = EmoEngine.Instance;
+
+                //Register event handler
+                mEngine.EmoEngineConnected += new EmoEngine.EmoEngineConnectedEventHandler(EmoEngineConnectedCB);
+                mEngine.EmoEngineDisconnected += new EmoEngine.EmoEngineDisconnectedEventHandler(EmoEngineDisconnectedCB);
+                mEngine.EmoEngineEmoStateUpdated += new EmoEngine.EmoEngineEmoStateUpdatedEventHandler(EmoEngineEmoStateUpdatedCB);
+            }
+            catch(EmoEngineException e)
+            {
+                FLogger.Log(LogType.Debug, e.ToString());
+            }
 		}
 		
 		
 		//I/O pin that needs to be setup only once after constructor
 		public void OnImportsSatisfied() {
-            ////Set the legends as they won't change dynamically
-            //ExpressivLegend();
-            //AffectivLegend();
 		}
 		
 		
@@ -170,20 +174,22 @@ namespace VVVV.EmotivEpoc
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
-			if(FConnect.IsChanged) {
+			if(FConnect.IsChanged)
+            {
 				if(FConnect[0] && !mIsConnected)
 					Connect(ConnectionMode[0], FServer[0]);
-				else {
-					mEngine.Disconnect();
-				}
+				else if(!FConnect[0] && mIsConnected)
+                	mEngine.Disconnect();
 			}
 			
-			if((FServer.IsChanged || ConnectionMode.IsChanged) && mIsConnected) {
+			if((FServer.IsChanged || ConnectionMode.IsChanged) && mIsConnected)
+            {
 				mEngine.Disconnect();
 				Connect(ConnectionMode[0], FServer[0]);
 			}
 			
-			if(mIsConnected) {
+			if(mIsConnected)
+            {
 				//Process events
 				mEngine.ProcessEvents(1000);
 			}

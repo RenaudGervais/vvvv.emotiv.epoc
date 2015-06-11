@@ -48,11 +48,14 @@ namespace VVVV.EmotivEpoc
         //Update fields when Emo state updated
         void CognitivEmoStateUpdated()
         {
-            EmoState es = FEmoState[0];
+            if (FEmoState[0] != null)
+            {
+                EmoState es = FEmoState[0];
 
-            mCogAction = es.CognitivGetCurrentAction();
-            mPower = es.CognitivGetCurrentActionPower();
-            mIsActive = es.CognitivIsActive();
+                mCogAction = es.CognitivGetCurrentAction();
+                mPower = es.CognitivGetCurrentActionPower();
+                mIsActive = es.CognitivIsActive();
+            }
         }
 
         //Processing loop

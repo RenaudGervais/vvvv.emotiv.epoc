@@ -145,32 +145,35 @@ namespace VVVV.EmotivEpoc
         //Event handler for Expressiv event
         void ExpressivEmoStateUpdated()
         {
-            EmoState es = FEmoState[0];
-
-            mIsBlink = es.ExpressivIsBlink();
-            mIsLeftWink = es.ExpressivIsLeftWink();
-            mIsRightWink = es.ExpressivIsRightWink();
-            mIsEyesOpen = es.ExpressivIsEyesOpen();
-            mIsLookingUp = es.ExpressivIsLookingUp();
-            mIsLookingDown = es.ExpressivIsLookingDown();
-            mIsLookingLeft = es.ExpressivIsLookingLeft();
-            mIsLookingRight = es.ExpressivIsLookingRight();
-            mLeftEyelid = 0.0F;
-            mRightEyelid = 0.0F;
-            mX = 0.0F;
-            mY = 0.0F;
-            es.ExpressivGetEyelidState(out mLeftEyelid, out mRightEyelid);
-            es.ExpressivGetEyeLocation(out mX, out mY);
-            mEyebrowExtent = es.ExpressivGetEyebrowExtent();
-            mSmileExtent = es.ExpressivGetSmileExtent();
-            mClenchExtent = es.ExpressivGetClenchExtent();
-            mUpperFaceAction = es.ExpressivGetUpperFaceAction();
-            mUpperFacePower = es.ExpressivGetUpperFaceActionPower();
-            mLowerFaceAction = es.ExpressivGetLowerFaceAction();
-            mLowerFacePower = es.ExpressivGetLowerFaceActionPower();
-            for (int i = 0; i < mExpAlgoList.Length; ++i)
+            if (FEmoState[0] != null)
             {
-                mIsExpActiveList[i] = es.ExpressivIsActive(mExpAlgoList[i]);
+                EmoState es = FEmoState[0];
+
+                mIsBlink = es.ExpressivIsBlink();
+                mIsLeftWink = es.ExpressivIsLeftWink();
+                mIsRightWink = es.ExpressivIsRightWink();
+                mIsEyesOpen = es.ExpressivIsEyesOpen();
+                mIsLookingUp = es.ExpressivIsLookingUp();
+                mIsLookingDown = es.ExpressivIsLookingDown();
+                mIsLookingLeft = es.ExpressivIsLookingLeft();
+                mIsLookingRight = es.ExpressivIsLookingRight();
+                mLeftEyelid = 0.0F;
+                mRightEyelid = 0.0F;
+                mX = 0.0F;
+                mY = 0.0F;
+                es.ExpressivGetEyelidState(out mLeftEyelid, out mRightEyelid);
+                es.ExpressivGetEyeLocation(out mX, out mY);
+                mEyebrowExtent = es.ExpressivGetEyebrowExtent();
+                mSmileExtent = es.ExpressivGetSmileExtent();
+                mClenchExtent = es.ExpressivGetClenchExtent();
+                mUpperFaceAction = es.ExpressivGetUpperFaceAction();
+                mUpperFacePower = es.ExpressivGetUpperFaceActionPower();
+                mLowerFaceAction = es.ExpressivGetLowerFaceAction();
+                mLowerFacePower = es.ExpressivGetLowerFaceActionPower();
+                for (int i = 0; i < mExpAlgoList.Length; ++i)
+                {
+                    mIsExpActiveList[i] = es.ExpressivIsActive(mExpAlgoList[i]);
+                }
             }
         }
 

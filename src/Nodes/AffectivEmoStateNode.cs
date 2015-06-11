@@ -98,84 +98,87 @@ namespace VVVV.EmotivEpoc
         //Update data
         void AffectivEmoStateUpdated()
         {
-            EmoState es = FEmoState[0];
-
-            Single timeFromStart = es.GetTimeFromStart();
-
-            mLongTermExcitementScore = es.AffectivGetExcitementLongTermScore();
-            mShortTermExcitementScore = es.AffectivGetExcitementShortTermScore();
-            for (int i = 0; i < mAffAlgoList.Length; ++i)
+            if (FEmoState[0] != null)
             {
-                mIsAffActiveList[i] = es.AffectivIsActive(mAffAlgoList[i]);
-            }
+                EmoState es = FEmoState[0];
 
-            mMeditationScore = es.AffectivGetMeditationScore();
-            mFrustrationScore = es.AffectivGetFrustrationScore();
-            mBoredomScore = es.AffectivGetEngagementBoredomScore();
+                Single timeFromStart = es.GetTimeFromStart();
 
-            es.AffectivGetExcitementShortTermModelParams(out mRawScoreEc, out mMinScaleEc, out mMaxScaleEc);
-            if (mMinScaleEc != mMaxScaleEc)
-            {
-                if (mRawScoreEc < mMinScaleEc)
+                mLongTermExcitementScore = es.AffectivGetExcitementLongTermScore();
+                mShortTermExcitementScore = es.AffectivGetExcitementShortTermScore();
+                for (int i = 0; i < mAffAlgoList.Length; ++i)
                 {
-                    mScaledScoreEc = 0;
+                    mIsAffActiveList[i] = es.AffectivIsActive(mAffAlgoList[i]);
                 }
-                else if (mRawScoreEc > mMaxScaleEc)
-                {
-                    mScaledScoreEc = 1;
-                }
-                else
-                {
-                    mScaledScoreEc = (mRawScoreEc - mMinScaleEc) / (mMaxScaleEc - mMinScaleEc);
-                }
-            }
 
-            es.AffectivGetEngagementBoredomModelParams(out mRawScoreEg, out mMinScaleEg, out mMaxScaleEg);
-            if (mMinScaleEg != mMaxScaleEg)
-            {
-                if (mRawScoreEg < mMinScaleEg)
+                mMeditationScore = es.AffectivGetMeditationScore();
+                mFrustrationScore = es.AffectivGetFrustrationScore();
+                mBoredomScore = es.AffectivGetEngagementBoredomScore();
+
+                es.AffectivGetExcitementShortTermModelParams(out mRawScoreEc, out mMinScaleEc, out mMaxScaleEc);
+                if (mMinScaleEc != mMaxScaleEc)
                 {
-                    mScaledScoreEg = 0;
+                    if (mRawScoreEc < mMinScaleEc)
+                    {
+                        mScaledScoreEc = 0;
+                    }
+                    else if (mRawScoreEc > mMaxScaleEc)
+                    {
+                        mScaledScoreEc = 1;
+                    }
+                    else
+                    {
+                        mScaledScoreEc = (mRawScoreEc - mMinScaleEc) / (mMaxScaleEc - mMinScaleEc);
+                    }
                 }
-                else if (mRawScoreEg > mMaxScaleEg)
+
+                es.AffectivGetEngagementBoredomModelParams(out mRawScoreEg, out mMinScaleEg, out mMaxScaleEg);
+                if (mMinScaleEg != mMaxScaleEg)
                 {
-                    mScaledScoreEg = 1;
+                    if (mRawScoreEg < mMinScaleEg)
+                    {
+                        mScaledScoreEg = 0;
+                    }
+                    else if (mRawScoreEg > mMaxScaleEg)
+                    {
+                        mScaledScoreEg = 1;
+                    }
+                    else
+                    {
+                        mScaledScoreEg = (mRawScoreEg - mMinScaleEg) / (mMaxScaleEg - mMinScaleEg);
+                    }
                 }
-                else
+                es.AffectivGetMeditationModelParams(out mRawScoreMd, out mMinScaleMd, out mMaxScaleMd);
+                if (mMinScaleMd != mMaxScaleMd)
                 {
-                    mScaledScoreEg = (mRawScoreEg - mMinScaleEg) / (mMaxScaleEg - mMinScaleEg);
+                    if (mRawScoreMd < mMinScaleMd)
+                    {
+                        mScaledScoreMd = 0;
+                    }
+                    else if (mRawScoreMd > mMaxScaleMd)
+                    {
+                        mScaledScoreMd = 1;
+                    }
+                    else
+                    {
+                        mScaledScoreMd = (mRawScoreMd - mMinScaleMd) / (mMaxScaleMd - mMinScaleMd);
+                    }
                 }
-            }
-            es.AffectivGetMeditationModelParams(out mRawScoreMd, out mMinScaleMd, out mMaxScaleMd);
-            if (mMinScaleMd != mMaxScaleMd)
-            {
-                if (mRawScoreMd < mMinScaleMd)
+                es.AffectivGetFrustrationModelParams(out mRawScoreFt, out mMinScaleFt, out mMaxScaleFt);
+                if (mMaxScaleFt != mMinScaleFt)
                 {
-                    mScaledScoreMd = 0;
-                }
-                else if (mRawScoreMd > mMaxScaleMd)
-                {
-                    mScaledScoreMd = 1;
-                }
-                else
-                {
-                    mScaledScoreMd = (mRawScoreMd - mMinScaleMd) / (mMaxScaleMd - mMinScaleMd);
-                }
-            }
-            es.AffectivGetFrustrationModelParams(out mRawScoreFt, out mMinScaleFt, out mMaxScaleFt);
-            if (mMaxScaleFt != mMinScaleFt)
-            {
-                if (mRawScoreFt < mMinScaleFt)
-                {
-                    mScaledScoreFt = 0;
-                }
-                else if (mRawScoreFt > mMaxScaleFt)
-                {
-                    mScaledScoreFt = 1;
-                }
-                else
-                {
-                    mScaledScoreFt = (mRawScoreFt - mMinScaleFt) / (mMaxScaleFt - mMinScaleFt);
+                    if (mRawScoreFt < mMinScaleFt)
+                    {
+                        mScaledScoreFt = 0;
+                    }
+                    else if (mRawScoreFt > mMaxScaleFt)
+                    {
+                        mScaledScoreFt = 1;
+                    }
+                    else
+                    {
+                        mScaledScoreFt = (mRawScoreFt - mMinScaleFt) / (mMaxScaleFt - mMinScaleFt);
+                    }
                 }
             }
         }

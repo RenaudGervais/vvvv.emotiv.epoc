@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nodes\AffectivEmoStateNode.cs" />
+    <Compile Include="Nodes\CognitivEmoStateNode.cs" />
     <Compile Include="Nodes\ExpressivEmoStateNode.cs" />
     <Compile Include="Nodes\DeviceEmotivEpocNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
