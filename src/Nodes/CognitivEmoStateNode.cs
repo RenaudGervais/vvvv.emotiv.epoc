@@ -27,6 +27,15 @@ namespace VVVV.EmotivEpoc
         #region fields & pins
         [Input("EmoState")]
         public IDiffSpread<EmoState> FEmoState;
+
+        [Output("Current Action")]
+        public ISpread<EdkDll.EE_CognitivAction_t> FCurrentAction;
+
+        [Output("Power")]
+        public ISpread<Single> FPower;
+
+        [Output("Is Active")]
+        public ISpread<Boolean> FIsActive;
         #endregion fields & pins
 
 
@@ -36,9 +45,31 @@ namespace VVVV.EmotivEpoc
         private Boolean mIsActive = false;
         #endregion vars
 
+        //Update fields when Emo state updated
+        void CognitivEmoStateUpdated()
+        {
+            EmoState es = FEmoState[0];
+
+            mCogAction = es.CognitivGetCurrentAction();
+            mPower = es.CognitivGetCurrentActionPower();
+            mIsActive = es.CognitivIsActive();
+        }
+
+        //Processing loop
         public void Evaluate(int SpreadMax)
         {
+            if (FEmoState.IsChanged && FEmoState.SliceCount > 0)
+                CognitivEmoStateUpdated();
 
+            //Output data to pins
+            FCurrentAction.SliceCount = 1;
+            FCurrentAction[0] = mCogAction;
+
+            FPower.SliceCount = 1;
+            FPower[0] = mPower;
+
+            FIsActive.SliceCount = 1;
+            FIsActive[0] = mIsActive;
         }
     }
 }
