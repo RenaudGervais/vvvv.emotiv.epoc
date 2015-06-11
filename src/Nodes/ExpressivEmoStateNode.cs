@@ -17,16 +17,16 @@ using VVVV.Core.Logging;
 namespace VVVV.EmotivEpoc
 {
     #region PluginInfo
-	[PluginInfo(Name = "Expressiv",
-				Category = "EmoState",
-				Help = "Exposes the Expressiv properties of an EmoState, i.e. facial expression",
-				Tags = "Emotiv, Epoc, Expressiv, EmoState")]
-	#endregion PluginInfo
-	public class ExpressivEmoStateNode : IPluginEvaluate
+    [PluginInfo(Name = "Expressiv",
+                Category = "EmoState",
+                Help = "Exposes the Expressiv properties of an EmoState, i.e. facial expression",
+                Tags = "Emotiv, Epoc, Expressiv, EmoState")]
+    #endregion PluginInfo
+    public class ExpressivEmoStateNode : IPluginEvaluate, IPartImportsSatisfiedNotification
     {
         #region fields & pins
-        [Input("EmoEngine", IsSingle = true)]
-        public ISpread<EmoEngine> iEmoEngine;
+        [Input("EmoState")]
+        public IDiffSpread<EmoState> FEmoState;
 
         [Output("Blink", IsBang = true)]
         public ISpread<bool> FIsBlink;
@@ -79,6 +79,12 @@ namespace VVVV.EmotivEpoc
         [Output("Lower Face Power")]
         public ISpread<Single> FLowerFacePower;
 
+        [Output("Expressiv Algo List")]
+        public ISpread<EdkDll.EE_ExpressivAlgo_t> FExpAlgoList;
+
+        [Output("Expressiv Active Algo", IsToggle = true)]
+        public ISpread<bool> FExpActiveAlgo;
+
 
 
         #endregion fields & pins
@@ -95,8 +101,8 @@ namespace VVVV.EmotivEpoc
         private Boolean mIsLookingDown = false;
         private Boolean mIsLookingLeft = false;
         private Boolean mIsLookingRight = false;
-        private Single mLeftEye = 0;
-        private Single mRightEye = 0;
+        private Single mLeftEyelid = 0;
+        private Single mRightEyelid = 0;
         private Single mX = 0;
         private Single mY = 0;
         private Single mEyebrowExtent = 0;
@@ -125,55 +131,116 @@ namespace VVVV.EmotivEpoc
         #endregion vars
 
         //Constructor
-        public ExpressivEmoStateNode() 
+        public ExpressivEmoStateNode()
         {
-            //Register event handler
-            iEmoEngine[0].ExpressivEmoStateUpdated +=
-                new EmoEngine.ExpressivEmoStateUpdatedEventHandler(ExpressivEmoStateUpdated);
+
+        }
+
+        public void OnImportsSatisfied()
+        {
+
         }
 
 
         //Event handler for Expressiv event
-        void ExpressivEmoStateUpdated(object sender, EmoStateUpdatedEventArgs e)
+        void ExpressivEmoStateUpdated()
         {
-            EmoState es = e.emoState;
-            lock (syncLock)
+            EmoState es = FEmoState[0];
+
+            mIsBlink = es.ExpressivIsBlink();
+            mIsLeftWink = es.ExpressivIsLeftWink();
+            mIsRightWink = es.ExpressivIsRightWink();
+            mIsEyesOpen = es.ExpressivIsEyesOpen();
+            mIsLookingUp = es.ExpressivIsLookingUp();
+            mIsLookingDown = es.ExpressivIsLookingDown();
+            mIsLookingLeft = es.ExpressivIsLookingLeft();
+            mIsLookingRight = es.ExpressivIsLookingRight();
+            mLeftEyelid = 0.0F;
+            mRightEyelid = 0.0F;
+            mX = 0.0F;
+            mY = 0.0F;
+            es.ExpressivGetEyelidState(out mLeftEyelid, out mRightEyelid);
+            es.ExpressivGetEyeLocation(out mX, out mY);
+            mEyebrowExtent = es.ExpressivGetEyebrowExtent();
+            mSmileExtent = es.ExpressivGetSmileExtent();
+            mClenchExtent = es.ExpressivGetClenchExtent();
+            mUpperFaceAction = es.ExpressivGetUpperFaceAction();
+            mUpperFacePower = es.ExpressivGetUpperFaceActionPower();
+            mLowerFaceAction = es.ExpressivGetLowerFaceAction();
+            mLowerFacePower = es.ExpressivGetLowerFaceActionPower();
+            for (int i = 0; i < mExpAlgoList.Length; ++i)
             {
-                mIsBlink = es.ExpressivIsBlink();
-                mIsLeftWink = es.ExpressivIsLeftWink();
-                mIsRightWink = es.ExpressivIsRightWink();
-                mIsEyesOpen = es.ExpressivIsEyesOpen();
-                mIsLookingUp = es.ExpressivIsLookingUp();
-                mIsLookingDown = es.ExpressivIsLookingDown();
-                mIsLookingLeft = es.ExpressivIsLookingLeft();
-                mIsLookingRight = es.ExpressivIsLookingRight();
-                mLeftEye = 0.0F;
-                mRightEye = 0.0F;
-                mX = 0.0F;
-                mY = 0.0F;
-                es.ExpressivGetEyelidState(out mLeftEye, out mRightEye);
-                es.ExpressivGetEyeLocation(out mX, out mY);
-                mEyebrowExtent = es.ExpressivGetEyebrowExtent();
-                mSmileExtent = es.ExpressivGetSmileExtent();
-                mClenchExtent = es.ExpressivGetClenchExtent();
-                mUpperFaceAction = es.ExpressivGetUpperFaceAction();
-                mUpperFacePower = es.ExpressivGetUpperFaceActionPower();
-                mLowerFaceAction = es.ExpressivGetLowerFaceAction();
-                mLowerFacePower = es.ExpressivGetLowerFaceActionPower();
-                for (int i = 0; i < mExpAlgoList.Length; ++i)
-                {
-                    mIsExpActiveList[i] = es.ExpressivIsActive(mExpAlgoList[i]);
-                }
+                mIsExpActiveList[i] = es.ExpressivIsActive(mExpAlgoList[i]);
             }
         }
 
         //Processing loop
         public void Evaluate(int SpreadMax)
         {
-            lock(syncLock)
-            { 
-                //Output data to pins            
-            }
+            if (FEmoState.IsChanged)
+                ExpressivEmoStateUpdated();
+
+            //Output data to pins
+            FIsBlink.SliceCount = 1;
+            FIsBlink[0] = mIsBlink;
+
+            FIsLeftWink.SliceCount = 1;
+            FIsLeftWink[0] = mIsLeftWink;
+
+            FIsRightWink.SliceCount = 1;
+            FIsRightWink[0] = mIsRightWink;
+
+            FIsEyesOpen.SliceCount = 1;
+            FIsEyesOpen[0] = mIsEyesOpen;
+
+            FIsLookingUp.SliceCount = 1;
+            FIsLookingUp[0] = mIsLookingUp;
+
+            FIsLookingDown.SliceCount = 1;
+            FIsLookingDown[0] = mIsLookingDown;
+
+            FIsLookingLeft.SliceCount = 1;
+            FIsLookingLeft[0] = mIsLookingLeft;
+
+            FIsLookingRight.SliceCount = 1;
+            FIsLookingRight[0] = mIsLookingRight;
+
+            FEyeLidState.SliceCount = 2;
+            FEyeLidState[0] = mLeftEyelid;
+            FEyeLidState[1] = mRightEyelid;
+
+            FEyeLocation.SliceCount = 2;
+            FEyeLocation[0] = mX;
+            FEyeLocation[1] = mY;
+
+            FEyebrowExtent.SliceCount = 1;
+            FEyebrowExtent[0] = mEyebrowExtent;
+
+            FSmileExtent.SliceCount = 1;
+            FSmileExtent[0] = mSmileExtent;
+
+            FClenchExtent.SliceCount = 1;
+            FClenchExtent[0] = mClenchExtent;
+
+            FUpperFaceAction.SliceCount = 1;
+            FUpperFaceAction[0] = mUpperFaceAction;
+
+            FUpperFacePower.SliceCount = 1;
+            FUpperFacePower[0] = mUpperFacePower;
+
+            FLowerFaceAction.SliceCount = 1;
+            FLowerFaceAction[0] = mLowerFaceAction;
+
+            FLowerFacePower.SliceCount = 1;
+            FLowerFacePower[0] = mLowerFacePower;
+
+            FExpAlgoList.SliceCount = mExpAlgoList.Length;
+            for (int i = 0; i < mExpAlgoList.Length; ++i)
+                FExpAlgoList[i] = mExpAlgoList[i];
+
+            FExpActiveAlgo.SliceCount = mIsExpActiveList.Length;
+            for (int i = 0; i < mIsExpActiveList.Length; ++i)
+                FExpActiveAlgo[i] = mIsExpActiveList[i];
         }
     }
 }

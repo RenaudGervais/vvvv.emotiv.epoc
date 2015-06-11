@@ -45,7 +45,7 @@ namespace VVVV.EmotivEpoc
 		public IDiffSpread<TEmotivConnectionMode> ConnectionMode;
 
         [Output("EmoState", IsSingle = true)]
-        public ISpread<EmoState> FEmoEmoState;
+        public ISpread<EmoState> FEmoState;
 
         [Output("Headset On", IsToggle = true)]
         public ISpread<bool> FHeadsetOn;
@@ -187,8 +187,13 @@ namespace VVVV.EmotivEpoc
             {
                 lock (syncLock)
                 {
-                    FEmoEmoState.SliceCount = 1;
-                    FEmoEmoState[0] = mEmoState;
+                    if (mEmoState != null)
+                    {
+                        FEmoState.SliceCount = 1;
+                        FEmoState[0] = mEmoState;
+                    }
+                    else
+                        FEmoState.SliceCount = 0;
                     FHeadsetOn.SliceCount = 1;
                     FHeadsetOn[0] = mIsHeadsetOn;
                     FCQ.SliceCount = mCQ.Length;
