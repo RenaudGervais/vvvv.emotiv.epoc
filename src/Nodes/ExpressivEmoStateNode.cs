@@ -20,39 +20,92 @@ namespace VVVV.EmotivEpoc
 	[PluginInfo(Name = "Expressiv",
 				Category = "EmoState",
 				Help = "Exposes the Expressiv properties of an EmoState, i.e. facial expression",
-				Tags = "Emotiv, Epoc, Expressiv, EmoState",
-				AutoEvaluate = true)]
+				Tags = "Emotiv, Epoc, Expressiv, EmoState")]
 	#endregion PluginInfo
 	public class ExpressivEmoStateNode : IPluginEvaluate
     {
         #region fields & pins
         [Input("EmoEngine", IsSingle = true)]
         public ISpread<EmoEngine> iEmoEngine;
+
+        [Output("Blink", IsBang = true)]
+        public ISpread<bool> FIsBlink;
+
+        [Output("Left Wink", IsBang = true)]
+        public ISpread<bool> FIsLeftWink;
+
+        [Output("Right Wink", IsBang = true)]
+        public ISpread<bool> FIsRightWink;
+
+        [Output("Eyes Open", IsToggle = true)]
+        public ISpread<bool> FIsEyesOpen;
+
+        [Output("Looking Up", IsToggle = true)]
+        public ISpread<bool> FIsLookingUp;
+
+        [Output("Looking Down", IsToggle = true)]
+        public ISpread<bool> FIsLookingDown;
+
+        [Output("Looking Left", IsToggle = true)]
+        public ISpread<bool> FIsLookingLeft;
+
+        [Output("Looking Right", IsToggle = true)]
+        public ISpread<bool> FIsLookingRight;
+
+        [Output("Eyelid State LR")]
+        public ISpread<Single> FEyeLidState;
+
+        [Output("Eye Location XY")]
+        public ISpread<Single> FEyeLocation;
+
+        [Output("Eyebrow Extent")]
+        public ISpread<Single> FEyebrowExtent;
+
+        [Output("Smile Extent")]
+        public ISpread<Single> FSmileExtent;
+
+        [Output("Clench Extent")]
+        public ISpread<Single> FClenchExtent;
+
+        [Output("Upper Face Action")]
+        public ISpread<EdkDll.EE_ExpressivAlgo_t> FUpperFaceAction;
+
+        [Output("Upper Face Power")]
+        public ISpread<Single> FUpperFacePower;
+
+        [Output("Lower Face Action")]
+        public ISpread<EdkDll.EE_ExpressivAlgo_t> FLowerFaceAction;
+
+        [Output("Lower Face Power")]
+        public ISpread<Single> FLowerFacePower;
+
+
+
         #endregion fields & pins
 
         #region vars
         //Synchronization semaphor
         private static object syncLock = new Object();
 
-        private Boolean mIsBlink;
-        private Boolean mIsLeftWink;
-        private Boolean mIsRightWink;
-        private Boolean mIsEyesOpen;
-        private Boolean mIsLookingUp;
-        private Boolean mIsLookingDown;
-        private Boolean mIsLookingLeft;
-        private Boolean mIsLookingRight;
-        private Single mLeftEye;
-        private Single mRightEye;
-        private Single mX;
-        private Single mY;
-        private Single mEyebrowExtent;
-        private Single mSmileExtent;
-        private Single mClenchExtent;
-        private EdkDll.EE_ExpressivAlgo_t mUpperFaceAction;
-        private Single mUpperFacePower;
-        private EdkDll.EE_ExpressivAlgo_t mLowerFaceAction;
-        private Single mLowerFacePower;
+        private Boolean mIsBlink = false;
+        private Boolean mIsLeftWink = false;
+        private Boolean mIsRightWink = false;
+        private Boolean mIsEyesOpen = false;
+        private Boolean mIsLookingUp = false;
+        private Boolean mIsLookingDown = false;
+        private Boolean mIsLookingLeft = false;
+        private Boolean mIsLookingRight = false;
+        private Single mLeftEye = 0;
+        private Single mRightEye = 0;
+        private Single mX = 0;
+        private Single mY = 0;
+        private Single mEyebrowExtent = 0;
+        private Single mSmileExtent = 0;
+        private Single mClenchExtent = 0;
+        private EdkDll.EE_ExpressivAlgo_t mUpperFaceAction = EdkDll.EE_ExpressivAlgo_t.EXP_NEUTRAL;
+        private Single mUpperFacePower = 0;
+        private EdkDll.EE_ExpressivAlgo_t mLowerFaceAction = EdkDll.EE_ExpressivAlgo_t.EXP_NEUTRAL;
+        private Single mLowerFacePower = 0;
 
         private static EdkDll.EE_ExpressivAlgo_t[] mExpAlgoList = { 
                                                       EdkDll.EE_ExpressivAlgo_t.EXP_BLINK, 
